@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MetroPass - Smart Fare Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 450px;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+            padding: 40px 30px;
+            text-align: center;
+            color: white;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .gender-btn {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid #e5e7eb;
+        }
+
+        .gender-btn.active {
+            border-color: #2563eb;
+            background-color: #eff6ff;
+            color: #2563eb;
+        }
+
+        .result-box {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 24px;
+            border: 1px dashed #cbd5e1;
+            display: none;
+        }
+
+        .rules-box {
+            background: #fefce8;
+            border: 1px solid #fef08a;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .animate-pop {
+            animation: pop 0.4s ease-out forwards;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(0.95); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .fare-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <div class="header">
+            <div class="flex justify-center mb-4">
+                <div class="bg-white/20 p-3 rounded-full">
+                    <i class="fas fa-subway text-3xl"></i>
+                </div>
+            </div>
+            <h1 class="text-2xl font-bold">MetroPass</h1>
+            <p class="opacity-80 text-sm">Automated Fare Calculator</p>
+        </div>
+
+        <div class="p-8">
+            <!-- Fare Rules Info Box -->
+            <div class="rules-box mb-6">
+                <h3 class="text-xs font-bold text-yellow-800 uppercase tracking-wider mb-2 flex items-center gap-2">
+                    <i class="fas fa-tag"></i> Discount Rules
+                </h3>
+                <ul class="text-[13px] text-yellow-900 space-y-1 opacity-90">
+                    <li>• <strong>Females:</strong> 50% Off</li>
+                    <li>• <strong>Under 5 Years:</strong> FREE</li>
+                    <li>• <strong>Up to 8 Years:</strong> 50% Off (Half Ticket)</li>
+                    <li>• <strong>Over 65 Years:</strong> Pay only 30% (70% Off)</li>
+                    <li class="pt-1 text-[11px] italic text-yellow-700 underline">Max discount applies for multiple categories.</li>
+                </ul>
+            </div>
+
+            <!-- Base Fare Input -->
+            <div class="input-group">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Standard Ticket Fare ($)</label>
+                <div class="relative">
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">$</span>
+                    <input type="number" id="baseFare" placeholder="Enter amount" 
+                        class="w-full pl-8 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none transition" value="10">
+                </div>
+            </div>
+
+            <!-- Gender Selection -->
+            <div class="input-group">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Select Gender</label>
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="setGender('male')" id="btn-male" class="gender-btn flex items-center justify-center gap-2 py-3 rounded-xl font-medium text-gray-600">
+                        <i class="fas fa-mars"></i> Male
+                    </button>
+                    <button onclick="setGender('female')" id="btn-female" class="gender-btn flex items-center justify-center gap-2 py-3 rounded-xl font-medium text-gray-600">
+                        <i class="fas fa-venus"></i> Female
+                    </button>
+                </div>
+            </div>
+
+            <!-- Age Input -->
+            <div class="input-group">
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Passenger Age</label>
+                <input type="number" id="age" placeholder="e.g. 25" 
+                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none transition">
+            </div>
+
+            <!-- Action Button -->
+            <button onclick="calculateFare()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 rounded-xl shadow-lg shadow-blue-200 transition transform active:scale-[0.98]">
+                Calculate Fare
+            </button>
+
+            <!-- Result Area -->
+            <div id="resultArea" class="result-box animate-pop">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <p class="text-sm text-gray-500 font-medium">Final Ticket Price</p>
+                        <h2 id="finalPrice" class="text-4xl font-bold text-gray-900 mt-1">$0.00</h2>
+                        <div id="appliedDiscount" class="fare-badge bg-green-100 text-green-700"></div>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-xs text-gray-400 uppercase tracking-wider font-bold">Status</p>
+                        <p id="ticketStatus" class="font-semibold text-blue-600">Valid Entry</p>
+                    </div>
+                </div>
+                
+                <hr class="my-4 border-gray-200">
+                
+                <div class="flex items-center text-xs text-gray-500 gap-2">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Best possible discount applied automatically.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedGender = null;
+
+        function setGender(gender) {
+            selectedGender = gender;
+            document.getElementById('btn-male').classList.remove('active');
+            document.getElementById('btn-female').classList.remove('active');
+            document.getElementById('btn-' + gender).classList.add('active');
+        }
+
+        function calculateFare() {
+            const baseFare = parseFloat(document.getElementById('baseFare').value);
+            const age = parseInt(document.getElementById('age').value);
+            const resultArea = document.getElementById('resultArea');
+            const finalPriceEl = document.getElementById('finalPrice');
+            const discountEl = document.getElementById('appliedDiscount');
+            const statusEl = document.getElementById('ticketStatus');
+
+            // Validation
+            if (isNaN(baseFare) || baseFare <= 0) {
+                alert("Please enter a valid ticket fare.");
+                return;
+            }
+            if (isNaN(age) || age < 0) {
+                alert("Please enter a valid age.");
+                return;
+            }
+            if (!selectedGender) {
+                alert("Please select a gender.");
+                return;
+            }
+
+            let discounts = []; // Store decimal multipliers (0.5 means 50% discount)
+
+            // Rule 1: Females get 50% off
+            if (selectedGender === 'female') {
+                discounts.push(0.50);
+            }
+
+            // Rule 2: Kids under 5 are free (100% off)
+            if (age < 5) {
+                discounts.push(1.00);
+            } 
+            // Rule 3: Kids up to 8 have half ticket (50% off)
+            else if (age <= 8) {
+                discounts.push(0.50);
+            }
+
+            // Rule 4: Over 65 pay only 30% (meaning 70% off)
+            if (age > 65) {
+                discounts.push(0.70);
+            }
+
+            // Case for no discounts
+            if (discounts.length === 0) {
+                discounts.push(0);
+            }
+
+            // Max discount will apply
+            const maxDiscount = Math.max(...discounts);
+            const finalPrice = baseFare * (1 - maxDiscount);
+
+            // UI Update
+            resultArea.style.display = 'block';
+            finalPriceEl.innerText = `$${finalPrice.toFixed(2)}`;
+            
+            if (maxDiscount === 1) {
+                discountEl.innerText = "FREE ENTRY (100% OFF)";
+                discountEl.className = "fare-badge bg-blue-100 text-blue-700";
+                statusEl.innerText = "Complimentary";
+            } else if (maxDiscount > 0) {
+                discountEl.innerText = `${(maxDiscount * 100).toFixed(0)}% DISCOUNT APPLIED`;
+                discountEl.className = "fare-badge bg-green-100 text-green-700";
+                statusEl.innerText = "Discounted Pass";
+            } else {
+                discountEl.innerText = "STANDARD FARE";
+                discountEl.className = "fare-badge bg-gray-100 text-gray-700";
+                statusEl.innerText = "Regular Pass";
+            }
+        }
+    </script>
+</body>
+</html>

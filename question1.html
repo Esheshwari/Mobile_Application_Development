@@ -1,0 +1,142 @@
+<!-- At a restaurant you ate: 1 Dal ₹ 100, 2 Roti ₹10
+each, 1 Ice Cream ₹30, calculate and display the
+final bill amount. -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Restaurant Bill</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .card {
+      background: #fff;
+      padding: 24px;
+      width: 380px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .menu-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .menu-item button {
+      padding: 6px 10px;
+      border: none;
+      background: #2563eb;
+      color: #fff;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .menu-item button:hover {
+      background: #1d4ed8;
+    }
+    .bill {
+      margin-top: 20px;
+      border-top: 1px solid #e5e7eb;
+      padding-top: 12px;
+    }
+    .bill p {
+      display: flex;
+      justify-content: space-between;
+      margin: 6px 0;
+    }
+    .total {
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .checkout {
+      margin-top: 16px;
+      width: 100%;
+      padding: 10px;
+      background: #16a34a;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .checkout:hover {
+      background: #15803d;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Restaurant Menu</h1>
+
+    <div class="menu-item">
+      <span>Dal – ₹100</span>
+      <button onclick="addItem('Dal', 100)">Add</button>
+    </div>
+
+    <div class="menu-item">
+      <span>Roti – ₹10</span>
+      <button onclick="addItem('Roti', 10)">Add</button>
+    </div>
+
+    <div class="menu-item">
+      <span>Ice Cream – ₹30</span>
+      <button onclick="addItem('Ice Cream', 30)">Add</button>
+    </div>
+
+    <div class="bill" id="bill">
+      <h3>Bill Details</h3>
+      <div id="billItems"></div>
+      <p class="total"><span>Total</span><span>₹ <span id="total">0</span></span></p>
+    </div>
+
+    <button class="checkout" onclick="checkout()">Checkout</button>
+  </div>
+
+  <script>
+    const items = {};
+    let total = 0;
+
+    function addItem(name, price) {
+      if (!items[name]) {
+        items[name] = { price, qty: 1 };
+      } else {
+        items[name].qty += 1;
+      }
+      total += price;
+      renderBill();
+    }
+
+    function renderBill() {
+      const billItems = document.getElementById('billItems');
+      billItems.innerHTML = '';
+
+      for (let item in items) {
+        const p = document.createElement('p');
+        p.innerHTML = `<span>${item} x ${items[item].qty}</span><span>₹ ${items[item].price * items[item].qty}</span>`;
+        billItems.appendChild(p);
+      }
+
+      document.getElementById('total').innerText = total;
+    }
+
+    function checkout() {
+      if (total === 0) {
+        alert('Please add items to the cart first!');
+      } else {
+        alert(`Thank you! Your final bill amount is ₹${total}`);
+      }
+    }
+  </script>
+</body>
+</html>

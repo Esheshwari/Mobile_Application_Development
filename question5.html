@@ -1,0 +1,153 @@
+<!-- Create Order Summary String for our Myntra Cart. -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Myntra Cart</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .card {
+      background: #fff;
+      width: 420px;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    button {
+      padding: 6px 10px;
+      margin-left: 4px;
+      border: none;
+      border-radius: 6px;
+      background: #ff3f6c;
+      color: #fff;
+      cursor: pointer;
+    }
+    button.remove {
+      background: #6b7280;
+    }
+    .cart {
+      margin-top: 16px;
+      border-top: 1px solid #e5e7eb;
+      padding-top: 12px;
+    }
+    .cart p {
+      display: flex;
+      justify-content: space-between;
+      margin: 6px 0;
+    }
+    pre {
+      background: #f9fafb;
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 12px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Myntra Cart</h1>
+
+    <div class="item">
+      <span>T‑Shirt – ₹799</span>
+      <div>
+        <button onclick="addItem('T-Shirt', 799)">Add</button>
+        <button class="remove" onclick="removeItem('T-Shirt', 799)">Remove</button>
+      </div>
+    </div>
+
+    <div class="item">
+      <span>Jeans – ₹1499</span>
+      <div>
+        <button onclick="addItem('Jeans', 1499)">Add</button>
+        <button class="remove" onclick="removeItem('Jeans', 1499)">Remove</button>
+      </div>
+    </div>
+
+    <div class="item">
+      <span>Shoes – ₹2999</span>
+      <div>
+        <button onclick="addItem('Shoes', 2999)">Add</button>
+        <button class="remove" onclick="removeItem('Shoes', 2999)">Remove</button>
+      </div>
+    </div>
+
+    <div class="cart">
+      <h3>Cart Summary</h3>
+      <div id="cartItems"></div>
+      <p><strong>Total Amount</strong><strong>₹ <span id="total">0</span></strong></p>
+
+      <h3>Order Summary String</h3>
+      <pre id="orderSummary">No items added</pre>
+    </div>
+  </div>
+
+  <script>
+    const cart = {};
+
+    function addItem(name, price) {
+      if (!cart[name]) {
+        cart[name] = { price, qty: 1 };
+      } else {
+        cart[name].qty++;
+      }
+      renderCart();
+    }
+
+    function removeItem(name) {
+      if (!cart[name]) return;
+
+      cart[name].qty--;
+      if (cart[name].qty === 0) {
+        delete cart[name];
+      }
+      renderCart();
+    }
+
+    function renderCart() {
+      const cartItems = document.getElementById('cartItems');
+      const orderSummary = document.getElementById('orderSummary');
+      cartItems.innerHTML = '';
+
+      let total = 0;
+      let summaryText = 'Order Summary:\n';
+
+      for (let item in cart) {
+        let itemTotal = cart[item].price * cart[item].qty;
+        total += itemTotal;
+        
+        cartItems.innerHTML += `<p><span>${item} x ${cart[item].qty}</span><span>₹ ${itemTotal}</span></p>`;
+        summaryText += `${item} x ${cart[item].qty} = ₹${itemTotal}\n`;
+      }
+
+      if (total === 0) {
+        orderSummary.textContent = 'No items added';
+      } else {
+        summaryText += `Total Amount: ₹${total}`;
+        orderSummary.textContent = summaryText;
+      }
+
+      document.getElementById('total').innerText = total;
+    }
+  </script>
+</body>
+</html>
