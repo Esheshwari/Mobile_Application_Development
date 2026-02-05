@@ -1,0 +1,163 @@
+<!-- Display good morning, afternoon and night based on
+current hour.
+
+Add the name to the output too.
+
+Create a Button which shows the number how many times
+
+it has been pressed.
+
+Also, it has different colors for when it has been pressed
+odd or even times.
+
+The click count should also survive browser refresh. -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Greeting & Persistent Click Counter</title>
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background: linear-gradient(135deg, #f8f4f0, #f0f4f8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        padding: 20px;
+    }
+
+    .container {
+        background: #fff;
+        padding: 30px 25px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        text-align: center;
+        width: 350px;
+    }
+
+    h1 {
+        color: #ff3e6c;
+        margin-bottom: 20px;
+    }
+
+    .greeting {
+        font-size: 20px;
+        margin-bottom: 25px;
+        color: #333;
+        min-height: 30px;
+    }
+
+    input {
+        padding: 10px;
+        width: 80%;
+        margin-bottom: 15px;
+        border-radius: 10px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+    }
+
+    button {
+        padding: 12px 20px;
+        font-size: 16px;
+        font-weight: bold;
+        border-radius: 12px;
+        border: none;
+        cursor: pointer;
+        color: white;
+        transition: 0.3s;
+        margin: 5px 0;
+    }
+
+    #greetBtn {
+        background: #ff7f50;
+    }
+    #greetBtn:hover {
+        background: #ff6347;
+    }
+
+    #clickBtn {
+        width: 100%;
+    }
+
+    .counter {
+        margin-top: 15px;
+        font-size: 18px;
+        font-weight: bold;
+        color: #333;
+    }
+
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Greeting & Click Counter</h1>
+
+    <!-- User Name Input -->
+    <input type="text" id="userName" placeholder="Enter your name">
+
+    <!-- Button to Show Greeting -->
+    <button id="greetBtn" onclick="showGreeting()">Say Hello</button>
+    <div class="greeting" id="greetingOutput"></div>
+
+    <!-- Click Counter Button -->
+    <button id="clickBtn" onclick="handleClick()">Click Me!</button>
+    <div class="counter" id="clickCountOutput">Button clicked 0 times</div>
+</div>
+
+<script>
+    // -------------------------------
+    // Persistent click count using localStorage
+    // -------------------------------
+    let clickCount = localStorage.getItem("clickCount") ? parseInt(localStorage.getItem("clickCount")) : 0;
+
+    const clickBtn = document.getElementById("clickBtn");
+    const clickCountOutput = document.getElementById("clickCountOutput");
+
+    function updateButtonColor() {
+        // Odd = blue, Even = green
+        if(clickCount % 2 === 0) {
+            clickBtn.style.backgroundColor = "#28a745"; // green
+        } else {
+            clickBtn.style.backgroundColor = "#007bff"; // blue
+        }
+        clickBtn.style.color = "#fff";
+    }
+
+    function handleClick() {
+        clickCount++;
+        localStorage.setItem("clickCount", clickCount); // save count
+        clickCountOutput.textContent = `Button clicked ${clickCount} ${clickCount === 1 ? "time" : "times"}`;
+        updateButtonColor();
+    }
+
+    // Initialize button color and count on page load
+    window.onload = function() {
+        clickCountOutput.textContent = `Button clicked ${clickCount} ${clickCount === 1 ? "time" : "times"}`;
+        updateButtonColor();
+    }
+
+    // -------------------------------
+    // Display greeting based on current hour + name
+    // -------------------------------
+    function showGreeting() {
+        const name = document.getElementById("userName").value.trim();
+        if(!name) return alert("Please enter your name!");
+
+        const hour = new Date().getHours();
+        let greeting = "";
+
+        if(hour >= 5 && hour < 12) greeting = "Good Morning";
+        else if(hour >= 12 && hour < 17) greeting = "Good Afternoon";
+        else greeting = "Good Night";
+
+        document.getElementById("greetingOutput").textContent = `${greeting}, ${name}!`;
+    }
+</script>
+
+</body>
+</html>
+

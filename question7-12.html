@@ -1,0 +1,94 @@
+<!-- Create a button with text click
+
+Create 2 buttons with class and id
+
+Create a paragraph
+
+Add colors to two buttons
+
+Add proper html structure
+
+Change page title
+
+Try to copy the given design on the bottom
+
+Add script element to page to show welcome alert
+
+Add onclick alert on Add to Bag and
+Wishlist
+buttons -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Buttons Practice Page</title>
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      padding: 30px;
+    }
+
+    p {
+      margin-bottom: 20px;
+    }
+
+    /* Button styles */
+    .add-btn {
+      background-color: #9cff9c;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    #wishlistBtn {
+      background-color: #fff;
+      color: #000;
+      border: 2px solid #000;
+      padding: 10px 20px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: bold;
+      margin-left: 10px;
+    }
+
+    .button-container {
+      background: #fff;
+      padding: 15px;
+      display: inline-block;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Paragraph -->
+  <p>This is a sample paragraph created as per the assignment.</p>
+
+  <!-- Buttons -->
+  <div class="button-container">
+    <button class="add-btn" id="addToBagBtn" onclick="addToBag()">Add to Bag</button>
+    <button class="wishlist" id="wishlistBtn" onclick="addToWishlist()">❤️ WISHLIST</button>
+  </div>
+
+  <!-- Script -->
+  <script>
+    // Welcome alert
+    alert("Welcome to the website!");
+
+    function addToBag() {
+      alert("Item added to bag!");
+    }
+
+    function addToWishlist() {
+      alert("Item added to wishlist!");
+    }
+  </script>
+
+</body>
+</html>
