@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShopSmart - 1+1 Deals & More</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f3f4f6;
+        }
+
+        .product-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        /* Toast Animation */
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .toast {
+            animation: slideIn 0.5s ease forwards;
+        }
+
+        .badge-sale {
+            background: linear-gradient(45deg, #ff416c, #ff4b2b);
+        }
+
+        /* Side Drawer Transition */
+        .drawer-transition {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .overlay {
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            transition: opacity 0.3s ease;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen relative overflow-x-hidden">
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-md sticky top-0 z-50">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fas fa-shopping-bag text-indigo-600 text-2xl"></i>
+                <h1 class="text-xl font-bold text-gray-800 tracking-wide">ShopSmart</h1>
+            </div>
+            
+            <div class="flex items-center space-x-6">
+                <!-- Wishlist Icon -->
+                <div class="relative cursor-pointer hover:text-indigo-600 transition" onclick="toggleWishlistModal(true)">
+                    <i class="fas fa-heart text-xl text-gray-600"></i>
+                    <span id="wishlist-count" class="absolute -top-2 -right-2 bg-pink-500 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full">0</span>
+                </div>
+
+                <!-- Cart Icon -->
+                <div class="relative cursor-pointer hover:text-indigo-600 transition" onclick="toggleCartDrawer(true)">
+                    <i class="fas fa-shopping-cart text-xl text-gray-600"></i>
+                    <span id="cart-count" class="absolute -top-2 -right-2 bg-indigo-600 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full">0</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 py-8 flex-grow">
+        
+        <!-- Header -->
+        <div class="mb-8 text-center">
+            <h2 class="text-3xl font-bold text-gray-800">Featured Collections</h2>
+            <p class="text-gray-500 mt-2">Grab the best 1+1 Deals on Food & Fashion</p>
+        </div>
+
+        <!-- Product Grid -->
+        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Products will be injected here by JS -->
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-6 mt-auto">
+        <div class="container mx-auto text-center">
+            <p>&copy; 2024 ShopSmart. All specific buttons included.</p>
+        </div>
+    </footer>
+
+    <!-- CART SIDE DRAWER -->
+    <div id="cart-drawer-overlay" class="fixed inset-0 z-[60] overlay hidden opacity-0" onclick="toggleCartDrawer(false)"></div>
+    <div id="cart-drawer" class="fixed right-0 top-0 h-full w-full max-w-md bg-white z-[70] shadow-2xl drawer-transition translate-x-full flex flex-col">
+        <div class="p-6 border-b flex justify-between items-center bg-gray-50">
+            <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                <i class="fas fa-shopping-cart text-indigo-600"></i> Your Bag
+            </h2>
+            <button onclick="toggleCartDrawer(false)" class="text-gray-400 hover:text-gray-600 p-2">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+        
+        <div id="cart-items-container" class="flex-grow overflow-y-auto p-6 space-y-4">
+            <!-- Cart items injected here -->
+        </div>
+
+        <div class="p-6 border-t bg-gray-50 space-y-4">
+            <div class="flex justify-between items-center text-lg font-bold">
+                <span>Total Amount:</span>
+                <span id="cart-total" class="text-indigo-600">$0.00</span>
+            </div>
+            <button onclick="checkout()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-4 rounded-xl font-bold shadow-lg transition transform active:scale-95 flex items-center justify-center gap-2">
+                Checkout Now <i class="fas fa-arrow-right"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- WISHLIST MODAL -->
+    <div id="wishlist-modal" class="fixed inset-0 z-[80] flex items-center justify-center hidden">
+        <div class="absolute inset-0 overlay" onclick="toggleWishlistModal(false)"></div>
+        <div class="bg-white rounded-3xl w-full max-w-lg mx-4 z-[90] shadow-2xl overflow-hidden animate-pop">
+            <div class="p-6 border-b flex justify-between items-center bg-pink-50">
+                <h2 class="text-xl font-bold text-pink-600 flex items-center gap-2">
+                    <i class="fas fa-heart"></i> My Wishlist
+                </h2>
+                <button onclick="toggleWishlistModal(false)" class="text-gray-400 hover:text-gray-600">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div id="wishlist-container" class="max-h-[60vh] overflow-y-auto p-6 space-y-4">
+                <!-- Wishlist items injected here -->
+            </div>
+            <div class="p-6 border-t text-center">
+                <button onclick="toggleWishlistModal(false)" class="text-gray-600 font-medium hover:underline text-sm">Continue Shopping</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed top-20 right-5 z-[100] flex flex-col space-y-2 pointer-events-none"></div>
+
+    <!-- Javascript Logic -->
+    <script>
+        // --- Data ---
+        const products = [
+            { id: 1, name: "Premium Burger Meal", category: "Food", price: 12.99, image: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=500&q=80" },
+            { id: 2, name: "Urban Denim Jacket", category: "Clothes", price: 49.99, image: "https://images.unsplash.com/photo-1523205565295-f8e91625443b?auto=format&fit=crop&w=500&q=80" },
+            { id: 3, name: "Classic Sneakers", category: "Clothes", price: 79.99, image: "https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=500&q=80" },
+            { id: 4, name: "Fresh Organic Salad", category: "Food", price: 9.99, image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=500&q=80" },
+            { id: 5, name: "Leather Handbag", category: "Accessories", price: 120.00, image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=500&q=80" },
+            { id: 6, name: "Pepperoni Pizza", category: "Food", price: 15.99, image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?auto=format&fit=crop&w=500&q=80" }
+        ];
+
+        // --- State ---
+        let cart = {}; 
+        let wishlist = new Set();
+
+        // --- Core UI Functions ---
+        function renderProducts() {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = products.map(product => {
+                const qty = cart[product.id] || 0;
+                return `
+                <div class="product-card bg-white rounded-xl shadow-sm overflow-hidden flex flex-col h-full border border-gray-100">
+                    <div class="relative h-48 overflow-hidden">
+                        <img src="${product.image}" alt="${product.name}" class="w-full h-full object-cover">
+                        <span class="absolute top-2 left-2 bg-indigo-600 text-white text-xs font-bold px-2 py-1 rounded">
+                            ${product.category}
+                        </span>
+                        ${qty > 0 ? `<span class="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-md">${qty} in Bag</span>` : ''}
+                    </div>
+                    
+                    <div class="p-4 flex-grow flex flex-col">
+                        <h3 class="font-bold text-gray-800 text-lg mb-1">${product.name}</h3>
+                        <p class="text-gray-600 font-semibold mb-4">$${product.price.toFixed(2)}</p>
+                        
+                        <div class="mt-auto space-y-2">
+                            <div class="flex items-center justify-between gap-2">
+                                <button onclick="removeFromCart(${product.id})" 
+                                    class="w-10 h-10 flex items-center justify-center rounded-lg bg-red-100 text-red-600 hover:bg-red-200 font-bold transition">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <button onclick="addToBag(${product.id})" 
+                                    class="flex-grow h-10 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition font-medium text-sm flex items-center justify-center gap-2">
+                                    <i class="fas fa-shopping-bag"></i> Add
+                                </button>
+                                <button onclick="addToBag(${product.id})" 
+                                    class="w-10 h-10 flex items-center justify-center rounded-lg bg-green-100 text-green-600 hover:bg-green-200 font-bold transition">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="toggleWishlist(${product.id})" 
+                                    class="flex-1 h-9 rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 hover:text-pink-500 transition flex items-center justify-center gap-1 text-xs font-semibold ${wishlist.has(product.id) ? 'text-pink-500 border-pink-200 bg-pink-50' : ''}">
+                                    <i class="${wishlist.has(product.id) ? 'fas' : 'far'} fa-heart"></i> Wishlist
+                                </button>
+                                <button onclick="addOnePlusOne(${product.id})" 
+                                    class="flex-1 h-9 rounded-lg badge-sale text-white hover:opacity-90 transition flex items-center justify-center gap-1 text-xs font-bold shadow-sm">
+                                    <i class="fas fa-tags"></i> 1+1 Sale
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function renderCartItems() {
+            const container = document.getElementById('cart-items-container');
+            const cartItems = Object.entries(cart).map(([id, qty]) => products.find(p => p.id == id));
+            
+            if (cartItems.length === 0) {
+                container.innerHTML = `
+                    <div class="h-full flex flex-col items-center justify-center text-center py-12">
+                        <i class="fas fa-shopping-basket text-5xl text-gray-200 mb-4"></i>
+                        <p class="text-gray-500 font-medium">Your bag is empty.</p>
+                        <p class="text-gray-400 text-sm">Add some items to get started!</p>
+                    </div>`;
+                document.getElementById('cart-total').innerText = "$0.00";
+                return;
+            }
+
+            let total = 0;
+            container.innerHTML = cartItems.map(p => {
+                const qty = cart[p.id];
+                const subtotal = p.price * qty;
+                total += subtotal;
+                return `
+                    <div class="flex items-center gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100 group">
+                        <img src="${p.image}" class="w-16 h-16 object-cover rounded-lg shadow-sm" alt="${p.name}">
+                        <div class="flex-grow">
+                            <h4 class="font-bold text-gray-800 text-sm">${p.name}</h4>
+                            <p class="text-gray-500 text-xs">$${p.price.toFixed(2)} x ${qty}</p>
+                            <p class="text-indigo-600 font-bold text-sm">$${subtotal.toFixed(2)}</p>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                             <button onclick="addToBag(${p.id})" class="p-1 hover:text-indigo-600"><i class="fas fa-plus-circle"></i></button>
+                             <button onclick="removeFromCart(${p.id})" class="p-1 hover:text-red-500"><i class="fas fa-minus-circle"></i></button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            document.getElementById('cart-total').innerText = `$${total.toFixed(2)}`;
+        }
+
+        function renderWishlistItems() {
+            const container = document.getElementById('wishlist-container');
+            const wishlistItems = Array.from(wishlist).map(id => products.find(p => p.id == id));
+
+            if (wishlistItems.length === 0) {
+                container.innerHTML = `
+                    <div class="py-12 text-center">
+                        <i class="far fa-heart text-5xl text-gray-200 mb-4"></i>
+                        <p class="text-gray-400">Your wishlist is lonely.</p>
+                    </div>`;
+                return;
+            }
+
+            container.innerHTML = wishlistItems.map(p => `
+                <div class="flex items-center justify-between gap-4 p-3 bg-gray-50 rounded-xl border border-gray-100">
+                    <div class="flex items-center gap-4">
+                        <img src="${p.image}" class="w-12 h-12 object-cover rounded-lg shadow-sm">
+                        <div>
+                            <p class="font-bold text-gray-800 text-sm">${p.name}</p>
+                            <p class="text-gray-500 text-xs">$${p.price.toFixed(2)}</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="addToBag(${p.id}); toggleWishlistModal(false)" class="bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-indigo-700">Add to Bag</button>
+                        <button onclick="toggleWishlist(${p.id})" class="text-red-400 hover:text-red-600 p-2"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // --- Interactive Functions ---
+        function toggleCartDrawer(open) {
+            const drawer = document.getElementById('cart-drawer');
+            const overlay = document.getElementById('cart-drawer-overlay');
+            if (open) {
+                renderCartItems();
+                drawer.classList.remove('translate-x-full');
+                overlay.classList.remove('hidden');
+                setTimeout(() => overlay.classList.add('opacity-100'), 10);
+            } else {
+                drawer.classList.add('translate-x-full');
+                overlay.classList.remove('opacity-100');
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+            }
+        }
+
+        function toggleWishlistModal(open) {
+            const modal = document.getElementById('wishlist-modal');
+            if (open) {
+                renderWishlistItems();
+                modal.classList.remove('hidden');
+            } else {
+                modal.classList.add('hidden');
+            }
+        }
+
+        function updateCartCount() {
+            const totalItems = Object.values(cart).reduce((a, b) => a + b, 0);
+            document.getElementById('cart-count').innerText = totalItems;
+            renderProducts(); 
+            if (!document.getElementById('cart-drawer').classList.contains('translate-x-full')) {
+                renderCartItems();
+            }
+        }
+
+        function addToBag(id) {
+            cart[id] = (cart[id] || 0) + 1;
+            updateCartCount();
+            const product = products.find(p => p.id === id);
+            showToast(`Added ${product.name} to bag!`, "success");
+        }
+
+        function addOnePlusOne(id) {
+            cart[id] = (cart[id] || 0) + 2;
+            updateCartCount();
+            const product = products.find(p => p.id === id);
+            showToast(`1+1 Applied: Added 2x ${product.name}`, "sale");
+        }
+
+        function removeFromCart(id) {
+            if (!cart[id]) return;
+            cart[id]--;
+            if (cart[id] === 0) delete cart[id];
+            updateCartCount();
+            showToast("Bag updated.", "info");
+        }
+
+        function toggleWishlist(id) {
+            const product = products.find(p => p.id === id);
+            if (wishlist.has(id)) {
+                wishlist.delete(id);
+                showToast(`Removed from wishlist`, "info");
+            } else {
+                wishlist.add(id);
+                showToast(`Saved to wishlist`, "love");
+            }
+            document.getElementById('wishlist-count').innerText = wishlist.size;
+            renderProducts();
+            renderWishlistItems();
+        }
+
+        function checkout() {
+            const totalItems = Object.values(cart).reduce((a, b) => a + b, 0);
+            if (totalItems === 0) {
+                showToast("Please add items to checkout.", "error");
+                return;
+            }
+            const total = document.getElementById('cart-total').innerText;
+            
+            // Custom checkout summary instead of alert
+            const container = document.getElementById('cart-items-container');
+            container.innerHTML = `
+                <div class="h-full flex flex-col items-center justify-center text-center p-6 animate-pop">
+                    <div class="bg-green-100 text-green-600 w-20 h-20 rounded-full flex items-center justify-center text-4xl mb-6">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Order Placed!</h2>
+                    <p class="text-gray-500 mb-6">Your payment of <span class="font-bold text-indigo-600">${total}</span> has been processed successfully.</p>
+                    <button onclick="clearCart(); toggleCartDrawer(false)" class="bg-gray-800 text-white px-8 py-3 rounded-xl font-bold">Done</button>
+                </div>
+            `;
+            // Hide footer of drawer during success
+            document.querySelector('#cart-drawer .border-t').style.display = 'none';
+        }
+
+        function clearCart() {
+            cart = {};
+            updateCartCount();
+            // Restore drawer footer
+            document.querySelector('#cart-drawer .border-t').style.display = 'block';
+        }
+
+        function showToast(message, type) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            let bgClass = "bg-gray-800";
+            let icon = "fa-info-circle";
+            if (type === "success") { bgClass = "bg-green-600"; icon = "fa-check-circle"; }
+            if (type === "error") { bgClass = "bg-red-500"; icon = "fa-exclamation-circle"; }
+            if (type === "sale") { bgClass = "badge-sale"; icon = "fa-bolt"; }
+            if (type === "love") { bgClass = "bg-pink-500"; icon = "fa-heart"; }
+            toast.className = `toast ${bgClass} text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-3 transform transition-all mb-2`;
+            toast.innerHTML = `<i class="fas ${icon}"></i> <span class="font-medium text-sm">${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-20px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        renderProducts();
+    </script>
+</body>
+</html>
