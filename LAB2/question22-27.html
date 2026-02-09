@@ -1,0 +1,167 @@
+<!-- Create object to represent a product from Myntra
+
+Create an Object with two references and log changes to
+one object by changing the other one.
+
+Use bracket notation to display delivery-time.
+
+Given an object {message: 'good job', status: 'complete'},
+
+use de-structuring to create two variables message and
+status.
+
+Add function isIdenticalProduct to compare two product
+objects. -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Myntra Product Demo</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f0f4f8;
+        display: flex;
+        justify-content: center;
+        padding: 20px;
+    }
+    .container {
+        background: #fff;
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        width: 450px;
+    }
+    h1 {
+        text-align: center;
+        color: #ff3e6c;
+        margin-bottom: 20px;
+    }
+    .section {
+        margin-bottom: 20px;
+    }
+    button {
+        padding: 8px 15px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+        margin-top: 5px;
+    }
+    .demoBtn { background: #28a745; color: white; }
+    .demoBtn:hover { background: #218838; }
+    .output {
+        margin-top: 10px;
+        font-weight: bold;
+        color: #333;
+        background: #f9f9f9;
+        padding: 8px;
+        border-radius: 8px;
+        min-height: 25px;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Myntra Product Demo</h1>
+
+    <!-- Section 1: Display Products -->
+    <div class="section">
+        <button class="demoBtn" onclick="showProducts()">Show Products</button>
+        <div class="output" id="productsOutput"></div>
+    </div>
+
+    <!-- Section 2: Object References Demo -->
+    <div class="section">
+        <button class="demoBtn" onclick="demoReferences()">Demo Object References</button>
+        <div class="output" id="refOutput"></div>
+    </div>
+
+    <!-- Section 3: Bracket Notation Demo -->
+    <div class="section">
+        <button class="demoBtn" onclick="showDeliveryTime()">Show Delivery-Time</button>
+        <div class="output" id="deliveryOutput"></div>
+    </div>
+
+    <!-- Section 4: Destructuring Demo -->
+    <div class="section">
+        <button class="demoBtn" onclick="demoDestructuring()">Destructure Object</button>
+        <div class="output" id="destructureOutput"></div>
+    </div>
+
+    <!-- Section 5: Compare Products -->
+    <div class="section">
+        <button class="demoBtn" onclick="compareProducts()">Compare Two Products</button>
+        <div class="output" id="compareOutput"></div>
+    </div>
+</div>
+
+<script>
+    // -------------------------------
+    // 1️⃣ Create objects to represent Myntra products
+    // -------------------------------
+    let product1 = { name: "Stylish Bag", price: 1499, "delivery-time": "3-5 days" };
+    let product2 = { name: "Casual Backpack", price: 1299, "delivery-time": "4-6 days" };
+
+    let products = [product1, product2]; // Array of products
+
+    function showProducts() {
+        // Display all products
+        let output = products.map(p => `${p.name} - ₹${p.price}, Delivery: ${p["delivery-time"]}`).join("<br>");
+        document.getElementById('productsOutput').innerHTML = output;
+    }
+
+    // -------------------------------
+    // 2️⃣ Object with two references
+    // -------------------------------
+    let ref1 = product1; // Reference 1
+    let ref2 = ref1;      // Reference 2 points to same object
+
+    function demoReferences() {
+        // Change price using ref2
+        ref2.price += 100;
+        // Log changes in ref1 (both are same object)
+        document.getElementById('refOutput').textContent = 
+            `Price changed via ref2. ref1.price = ₹${ref1.price}, ref2.price = ₹${ref2.price}`;
+        console.log("ref1:", ref1, "ref2:", ref2);
+    }
+
+    // -------------------------------
+    // 3️⃣ Bracket notation to access delivery-time
+    // -------------------------------
+    function showDeliveryTime() {
+        let delivery = product1["delivery-time"]; // bracket notation
+        document.getElementById('deliveryOutput').textContent = 
+            `Delivery time of ${product1.name}: ${delivery}`;
+    }
+
+    // -------------------------------
+    // 4️⃣ Destructuring an object
+    // -------------------------------
+    function demoDestructuring() {
+        let obj = {message: 'good job', status: 'complete'};
+        let {message, status} = obj; // destructuring
+        document.getElementById('destructureOutput').textContent = 
+            `Message: ${message}, Status: ${status}`;
+    }
+
+    // -------------------------------
+    // 5️⃣ Compare two product objects
+    // -------------------------------
+    function isIdenticalProduct(p1, p2) {
+        // Compare using JSON.stringify
+        return JSON.stringify(p1) === JSON.stringify(p2);
+    }
+
+    function compareProducts() {
+        let identical = isIdenticalProduct(product1, product2);
+        document.getElementById('compareOutput').textContent = 
+            identical ? "Products are identical ✅" : "Products are different ❌";
+    }
+</script>
+
+</body>
+</html>

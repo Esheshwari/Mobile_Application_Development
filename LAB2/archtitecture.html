@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Understanding Goal-Based AI</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --secondary: #1e40af;
+            --accent: #0ea5e9;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --text-gray: #475569;
+            --success: #10b981;
+            --warning: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+
+        body {
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: var(--light);
+        }
+
+        /* Header */
+        header {
+            background: white;
+            padding: 1rem 5%;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-gray);
+            margin-left: 2rem;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--primary);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 6rem 5%;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            max-width: 800px;
+            margin: 0 auto 2rem;
+            opacity: 0.9;
+        }
+
+        .btn {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Content Sections */
+        section {
+            padding: 5rem 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            color: var(--dark);
+            position: relative;
+        }
+
+        h2::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background: var(--primary);
+            margin-top: 10px;
+            border-radius: 2px;
+        }
+
+        /* Diagram Section */
+        .diagram-box {
+            background: white;
+            padding: 3rem;
+            border-radius: 16px;
+            text-align: center;
+            margin: 3rem 0;
+            border: 1px solid #e2e8f0;
+        }
+
+        .flow-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-weight: bold;
+        }
+
+        .node {
+            background: var(--light);
+            border: 2px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: 8px;
+            width: 150px;
+        }
+
+        .arrow {
+            font-size: 2rem;
+            color: var(--text-gray);
+        }
+        
+        /* Pros & Cons Grid */
+        .pros-cons-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .pros-card, .cons-card {
+            padding: 2rem;
+            border-radius: 12px;
+            color: var(--dark);
+        }
+
+        .pros-card {
+            background-color: #ecfdf5; /* Light green */
+            border-left: 5px solid var(--success);
+        }
+
+        .cons-card {
+            background-color: #fffbeb; /* Light yellow */
+            border-left: 5px solid var(--warning);
+        }
+        
+        .list-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        ul.styled-list {
+            list-style: none;
+        }
+
+        ul.styled-list li {
+            margin-bottom: 0.8rem;
+            position: relative;
+            padding-left: 1.5rem;
+        }
+
+        ul.styled-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+        
+        /* Deep Dive Section */
+        .deep-dive {
+            background: white;
+            padding: 3rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            margin-top: 2rem;
+        }
+        
+        .step-list {
+            counter-reset: step;
+            margin-top: 2rem;
+        }
+        
+        .step-item {
+            margin-bottom: 1.5rem;
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .step-number {
+            background: var(--primary);
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            text-align: center;
+            padding: 3rem;
+            margin-top: 4rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            nav { display: none; }
+            .pros-cons-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">AI Learning Hub</div>
+        <nav>
+            <a href="#definition">Definition</a>
+            <a href="#example-deep-dive">GPS Deep Dive</a>
+            <a href="#pros-cons">Pros & Cons</a>
+        </nav>
+    </header>
+
+    <div class="hero">
+        <h1>Goal-Based AI Agents</h1>
+        <p>Moving beyond simple reactions. Discover how Artificial Intelligence plans, searches, and acts to achieve specific future states.</p>
+        <a href="#definition" class="btn">Start Learning</a>
+    </div>
+
+    <section id="definition">
+        <h2>What is Goal-Based AI?</h2>
+        <p style="font-size: 1.1rem;">
+            A <strong>Goal-Based Agent</strong> is an AI system that acts not just based on the current environment, but with a specific objective in mind. Unlike simple "reflex" agents that just react to stimulus, goal-based agents consider the future.
+        </p>
+
+        <div class="diagram-box">
+            <h4>The Agent Loop</h4>
+            <br>
+            <div class="flow-container">
+                <div class="node">
+                    Sensors<br>
+                    <span style="font-size: 0.8rem; color: #666;">(Observe World)</span>
+                </div>
+                <div class="arrow">→</div>
+                <div class="node">
+                    State<br>
+                    <span style="font-size: 0.8rem; color: #666;">(Where am I?)</span>
+                </div>
+                <div class="arrow">→</div>
+                <div class="node">
+                    <strong>Goal?</strong><br>
+                    <span style="font-size: 0.8rem; color: #666;">(Am I there yet?)</span>
+                </div>
+                <div class="arrow">→</div>
+                <div class="node">
+                    Search<br>
+                    <span style="font-size: 0.8rem; color: #666;">(Plan Route)</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="example-deep-dive" style="background-color: #f1f5f9;">
+        <h2>Deep Dive Example: The GPS Navigator</h2>
+        <p>To truly understand Goal-Based AI, let's look at a <strong>GPS Navigation App</strong> (like Google Maps). It is the classic example of an agent that must search for a path to a goal.</p>
+        
+        <div class="deep-dive">
+            <h3>The Scenario</h3>
+            <p><strong>The Goal:</strong> You are at "Home" and want to get to the "Airport" by 5:00 PM.</p>
+            <hr style="margin: 1.5rem 0; border: 0; border-top: 1px solid #e2e8f0;">
+            
+            <div class="step-list">
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <div>
+                        <h4>State Identification</h4>
+                        <p>The AI uses GPS sensors to identify your current node on the graph (The Map). It knows you are at Coordinate A (Home).</p>
+                    </div>
+                </div>
+                
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div>
+                        <h4>Goal Formulation</h4>
+                        <p>The AI accepts your input. The target state is Coordinate B (Airport).</p>
+                    </div>
+                </div>
+                
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div>
+                        <h4>Search & Planning (The "Thinking" Part)</h4>
+                        <p>The AI doesn't just guess. It runs a search algorithm (like A* Search). It looks at thousands of road segments.</p>
+                        <ul style="margin-top: 0.5rem; margin-left: 1rem; color: #666;">
+                            <li><em>Option A:</em> Highway (Fast, but traffic jam reported).</li>
+                            <li><em>Option B:</em> City Roads (Shorter distance, but many stoplights).</li>
+                        </ul>
+                        <p style="margin-top: 0.5rem;">It simulates the future: "If I take Option A, arrival time is 5:10. If Option B, arrival time is 4:55."</p>
+                    </div>
+                </div>
+                
+                <div class="step-item">
+                    <div class="step-number">4</div>
+                    <div>
+                        <h4>Execution & Re-planning</h4>
+                        <p>The AI selects Option B. However, halfway there, you miss a turn (Environment change). A simple reflex agent might fail here. But the Goal-Based Agent immediately <strong>re-calculates</strong> a new plan from your <em>new</em> current state to the <em>same</em> goal.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="pros-cons">
+        <h2>Advantages & Limitations</h2>
+        <p>Goal-based AI is powerful, but it comes with trade-offs regarding speed and complexity.</p>
+        
+        <div class="pros-cons-grid">
+            <div class="pros-card">
+                <div class="list-title">
+                    <span style="color: var(--success);">✓</span> Advantages
+                </div>
+                <ul class="styled-list">
+                    <li><strong>Flexible Behavior:</strong> The agent isn't stuck with one set of hard-coded rules. If the road is blocked, it finds another way.</li>
+                    <li><strong>Handles Novel Situations:</strong> It can solve problems it has never seen before, as long as it understands the rules of the world.</li>
+                    <li><strong>Optimized Solutions:</strong> It doesn't just find <em>a</em> solution; it can search for the <em>best</em> solution (shortest path, lowest cost).</li>
+                </ul>
+            </div>
+
+            <div class="cons-card">
+                <div class="list-title">
+                    <span style="color: var(--warning);">⚠</span> Limitations
+                </div>
+                <ul class="styled-list">
+                    <li><strong>Computationally Expensive:</strong> Searching through thousands of future possibilities takes processing power and time.</li>
+                    <li><strong>Slow in Emergencies:</strong> In situations requiring instant reaction (like a car braking for a pedestrian), "thinking" for too long can be dangerous. Reflex agents are better there.</li>
+                    <li><strong>Requires a Good "Model":</strong> If the AI's map of the world is wrong (e.g., the GPS map is outdated), its planning will fail.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 AI Learning Hub. Created for educational purposes.</p>
+    </footer>
+
+    <script>
+        // Smooth scrolling for navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

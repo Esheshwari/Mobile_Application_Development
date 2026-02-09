@@ -1,0 +1,138 @@
+<!-- Create a method to check if a number is odd
+or even.
+
+Create a method to return larger of the two
+numbers.
+
+Create Method to convert Celsius to
+
+Fahrenheit
+
+F = (9/5) * C + 32 -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Number & Temperature Utility</title>
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background: #f0f4f8;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+    }
+
+    .container {
+        background: #fff;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        width: 350px;
+    }
+
+    h1 {
+        text-align: center;
+        color: #ff3e6c;
+        margin-bottom: 20px;
+    }
+
+    .section {
+        margin-bottom: 25px;
+    }
+
+    input {
+        width: 100%;
+        padding: 10px;
+        margin-top: 5px;
+        margin-bottom: 10px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+    }
+
+    button {
+        width: 100%;
+        padding: 10px;
+        background: #28a745;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+
+    button:hover {
+        background: #218838;
+    }
+
+    .output {
+        margin-top: 10px;
+        font-weight: bold;
+        text-align: center;
+        color: #333;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>Utility Tools</h1>
+
+    <!-- Odd/Even Checker -->
+    <div class="section">
+        <label>Enter a number to check Odd/Even:</label>
+        <input type="number" id="numInput" placeholder="Enter number">
+        <button onclick="checkOddEven()">Check Odd/Even</button>
+        <div class="output" id="oddEvenResult"></div>
+    </div>
+
+    <!-- Larger of Two Numbers -->
+    <div class="section">
+        <label>Enter two numbers to find larger:</label>
+        <input type="number" id="num1" placeholder="First number">
+        <input type="number" id="num2" placeholder="Second number">
+        <button onclick="findLarger()">Find Larger</button>
+        <div class="output" id="largerResult"></div>
+    </div>
+
+    <!-- Celsius to Fahrenheit -->
+    <div class="section">
+        <label>Enter Celsius to convert to Fahrenheit:</label>
+        <input type="number" id="celsiusInput" placeholder="Celsius value">
+        <button onclick="convertCelsius()">Convert</button>
+        <div class="output" id="fahrenheitResult"></div>
+    </div>
+</div>
+
+<script>
+    // Odd/Even checker
+    function checkOddEven() {
+        const num = Number(document.getElementById('numInput').value);
+        if(isNaN(num)) return alert("Please enter a valid number!");
+        const result = (num % 2 === 0) ? "Even" : "Odd";
+        document.getElementById('oddEvenResult').textContent = `${num} is ${result}`;
+    }
+
+    // Find larger of two numbers
+    function findLarger() {
+        const a = Number(document.getElementById('num1').value);
+        const b = Number(document.getElementById('num2').value);
+        if(isNaN(a) || isNaN(b)) return alert("Please enter both numbers!");
+        const larger = (a > b) ? a : b;
+        document.getElementById('largerResult').textContent = `Larger number is ${larger}`;
+    }
+
+    // Celsius to Fahrenheit
+    function convertCelsius() {
+        const c = Number(document.getElementById('celsiusInput').value);
+        if(isNaN(c)) return alert("Please enter a valid Celsius value!");
+        const f = (9/5) * c + 32;
+        document.getElementById('fahrenheitResult').textContent = `${c}°C = ${f.toFixed(2)}°F`;
+    }
+</script>
+</body>
+</html>

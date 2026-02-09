@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ProCalc - Scientific Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Poppins:wght@300;400;600&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            color: white;
+        }
+
+        .calc-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 2rem;
+            padding: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .display-screen {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-align: right;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            word-wrap: break-word;
+            word-break: break-all;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        #history {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            color: #94a3b8;
+            margin-bottom: 0.5rem;
+            height: 1.25rem;
+        }
+
+        #current-val {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #f8fafc;
+        }
+
+        .btn-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.75rem;
+        }
+
+        .calc-btn {
+            height: 3.5rem;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1.125rem;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .btn-num { background: rgba(255, 255, 255, 0.08); color: #e2e8f0; }
+        .btn-num:hover { background: rgba(255, 255, 255, 0.15); transform: translateY(-2px); }
+
+        .btn-op { background: rgba(99, 102, 241, 0.15); color: #818cf8; }
+        .btn-op:hover { background: rgba(99, 102, 241, 0.25); color: #a5b4fc; transform: translateY(-2px); }
+
+        .btn-sci { background: rgba(255, 255, 255, 0.03); color: #94a3b8; font-size: 0.9rem; }
+        .btn-sci:hover { background: rgba(255, 255, 255, 0.1); color: #cbd5e1; transform: translateY(-2px); }
+
+        .btn-clear { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+        .btn-clear:hover { background: rgba(239, 68, 68, 0.25); transform: translateY(-2px); }
+
+        .btn-equal { 
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); 
+            color: white; 
+            grid-column: span 2;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+        .btn-equal:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4); filter: brightness(1.1); }
+
+        .active-btn { transform: scale(0.95) !important; filter: brightness(1.2); }
+    </style>
+</head>
+<body>
+
+    <div class="calc-container">
+        <!-- Logo/Header -->
+        <div class="flex items-center justify-between mb-6 opacity-60">
+            <span class="text-xs font-bold tracking-widest uppercase">Scientific</span>
+            <i class="fas fa-microchip"></i>
+        </div>
+
+        <!-- Display -->
+        <div class="display-screen">
+            <div id="history"></div>
+            <div id="current-val">0</div>
+        </div>
+
+        <!-- Buttons -->
+        <div class="btn-grid">
+            <!-- Row 1: Scientific Basics -->
+            <div class="calc-btn btn-sci" onclick="scientific('sin')">sin</div>
+            <div class="calc-btn btn-sci" onclick="scientific('cos')">cos</div>
+            <div class="calc-btn btn-sci" onclick="scientific('tan')">tan</div>
+            <div class="calc-btn btn-clear" onclick="clearAll()">AC</div>
+
+            <!-- Row 2: Powers/Roots -->
+            <div class="calc-btn btn-sci" onclick="scientific('sqrt')">√</div>
+            <div class="calc-btn btn-sci" onclick="appendValue('**')">xʸ</div>
+            <div class="calc-btn btn-sci" onclick="scientific('log')">log</div>
+            <div class="calc-btn btn-op" onclick="deleteLast()"><i class="fas fa-backspace"></i></div>
+
+            <!-- Row 3: Standard -->
+            <div class="calc-btn btn-num" onclick="appendValue('7')">7</div>
+            <div class="calc-btn btn-num" onclick="appendValue('8')">8</div>
+            <div class="calc-btn btn-num" onclick="appendValue('9')">9</div>
+            <div class="calc-btn btn-op" onclick="appendValue('/')">÷</div>
+
+            <!-- Row 4 -->
+            <div class="calc-btn btn-num" onclick="appendValue('4')">4</div>
+            <div class="calc-btn btn-num" onclick="appendValue('5')">5</div>
+            <div class="calc-btn btn-num" onclick="appendValue('6')">6</div>
+            <div class="calc-btn btn-op" onclick="appendValue('*')">×</div>
+
+            <!-- Row 5 -->
+            <div class="calc-btn btn-num" onclick="appendValue('1')">1</div>
+            <div class="calc-btn btn-num" onclick="appendValue('2')">2</div>
+            <div class="calc-btn btn-num" onclick="appendValue('3')">3</div>
+            <div class="calc-btn btn-op" onclick="appendValue('-')">−</div>
+
+            <!-- Row 6 -->
+            <div class="calc-btn btn-num" onclick="appendValue('0')">0</div>
+            <div class="calc-btn btn-num" onclick="appendValue('.')">.</div>
+            <div class="calc-btn btn-op" onclick="appendValue('+')">+</div>
+            <div class="calc-btn btn-sci" onclick="scientific('pi')">π</div>
+
+            <!-- Final Row -->
+            <div class="calc-btn btn-sci" onclick="appendValue('(')">(</div>
+            <div class="calc-btn btn-sci" onclick="appendValue(')')">)</div>
+            <div class="calc-btn btn-equal" onclick="calculate()">=</div>
+        </div>
+    </div>
+
+    <script>
+        const currentDisplay = document.getElementById('current-val');
+        const historyDisplay = document.getElementById('history');
+        let currentInput = '0';
+        let shouldReset = false;
+
+        function updateDisplay() {
+            currentDisplay.innerText = currentInput;
+        }
+
+        function appendValue(val) {
+            if (currentInput === '0' || shouldReset) {
+                if (val === '.') {
+                    currentInput = '0.';
+                } else if (['+', '-', '*', '/', '**'].includes(val)) {
+                    currentInput += val;
+                } else {
+                    currentInput = val;
+                }
+                shouldReset = false;
+            } else {
+                currentInput += val;
+            }
+            updateDisplay();
+        }
+
+        function clearAll() {
+            currentInput = '0';
+            historyDisplay.innerText = '';
+            shouldReset = false;
+            updateDisplay();
+        }
+
+        function deleteLast() {
+            if (currentInput.length > 1) {
+                currentInput = currentInput.slice(0, -1);
+            } else {
+                currentInput = '0';
+            }
+            updateDisplay();
+        }
+
+        function calculate() {
+            try {
+                // Pre-process for UI power display if needed, but here we use **
+                let expression = currentInput;
+                historyDisplay.innerText = expression + ' =';
+                
+                // eval is safe for a local calculator with restricted input
+                let result = eval(expression);
+                
+                // Handle floating point precision
+                if (!Number.isInteger(result)) {
+                    result = parseFloat(result.toFixed(8));
+                }
+                
+                currentInput = result.toString();
+                shouldReset = true;
+                updateDisplay();
+            } catch (error) {
+                currentInput = "Error";
+                updateDisplay();
+                setTimeout(clearAll, 1500);
+            }
+        }
+
+        function scientific(func) {
+            let val = parseFloat(currentInput);
+            let res = 0;
+
+            switch(func) {
+                case 'sin': res = Math.sin(val * Math.PI / 180); break;
+                case 'cos': res = Math.cos(val * Math.PI / 180); break;
+                case 'tan': res = Math.tan(val * Math.PI / 180); break;
+                case 'sqrt': res = Math.sqrt(val); break;
+                case 'log': res = Math.log10(val); break;
+                case 'pi': 
+                    if (currentInput === '0') currentInput = Math.PI.toString();
+                    else currentInput += '*' + Math.PI.toFixed(8);
+                    updateDisplay();
+                    return;
+            }
+
+            if (!Number.isInteger(res)) res = parseFloat(res.toFixed(8));
+            currentInput = res.toString();
+            shouldReset = true;
+            updateDisplay();
+        }
+
+        // Add keyboard support
+        window.addEventListener('keydown', (e) => {
+            if (e.key >= '0' && e.key <= '9') appendValue(e.key);
+            if (e.key === '.') appendValue('.');
+            if (e.key === '+') appendValue('+');
+            if (e.key === '-') appendValue('-');
+            if (e.key === '*') appendValue('*');
+            if (e.key === '/') appendValue('/');
+            if (e.key === 'Enter') calculate();
+            if (e.key === 'Backspace') deleteLast();
+            if (e.key === 'Escape') clearAll();
+        });
+    </script>
+</body>
+</html>
