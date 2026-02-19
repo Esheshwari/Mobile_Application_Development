@@ -3,5 +3,10 @@
   { "id": 2, "name": "Priya", "grade": "B", "section": "2" },
   { "id": 3, "name": "Arjun", "grade": "A+", "section": "1" },
   { "id": 4, "name": "Sneha", "grade": "A", "section": "3" },
-  { "id": 5, "name": "Karan", "grade": "B+", "section": "2" }
+  { "id": 5, "name": "Karan", "grade": "B+", "section": "2" },
+  { "id": 6, "name": "Rahul", "grade": "A", "section": "1" },
+  { "id": 7, "name": "Priya", "grade": "B", "section": "2" },
+  { "id": 8, "name": "Arjun", "grade": "A+", "section": "1" },
+  { "id": 9, "name": "Sneha", "grade": "A", "section": "3" },
+  { "id": 10, "name": "Karan", "grade": "B+", "section": "2" }
 ]
