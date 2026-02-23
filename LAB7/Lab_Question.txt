@@ -1,0 +1,80 @@
+Build a “Food Delivery Menu App” 
+Objective
+
+Design a React Native application that displays a using FlatList. The app should visually represent food items in a clean card layout like real food delivery apps.
+
+
+Problem Statement
+
+You are developing a simple .
+
+The app must display a list of food items fetched from a local JSON file.
+
+Each food item must contain:
+id
+name
+category (Veg / Non-Veg / Beverage)
+price
+rating
+Each item must be displayed in a styled card layout.
+
+Data Format (menu.json)
+
+
+
+[
+{ "id": 1, "name": "Paneer Butter Masala", "category": "Veg", "price": 250, "rating": 4.5 },
+{ "id": 2, "name": "Chicken Biryani", "category": "Non-Veg", "price": 300, "rating": 4.7 },
+{ "id": 3, "name": "Cold Coffee", "category": "Beverage", "price": 120, "rating": 4.2 }
+]
+
+
+
+Requirements 
+1️⃣ Layout Structure
+Use SafeAreaView as the root container
+Use View for layout grouping
+Apply proper spacing and padding
+
+
+2️⃣ List Rendering
+Use FlatList
+Implement:
+renderItem
+keyExtractor
+
+
+3️⃣ Card UI Design
+
+Each food item card must display:
+🍽 Food Name (bold)
+📂 Category
+💰 Price
+⭐ Rating
+Cards must include:
+Background color
+Border radius
+Margin between items
+Proper text alignment
+
+
+4️⃣ Required FlatList Features
+
+You must implement:
+ListHeaderComponent → “Restaurant Menu”
+ListFooterComponent → “Thank You for Visiting”
+ItemSeparatorComponent
+ListEmptyComponent
+
+
+Change card color based on category:
+Veg → Light Green
+Non-Veg → Light Red
+Beverage → Light Blue
+
+
+Display items horizontally.
+
+
+
+Add a simple price formatting (₹ symbol).
