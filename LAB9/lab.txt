@@ -1,0 +1,27 @@
+create a folder Hyped 
+
+HYPED
+│
+App.js
+│
+src
+ ├── atoms
+ ├── molecules
+ ├── navigation
+ └── screens
+
+src/atoms
+    CustomButton.js
+    CustomText.js
+    Badge.js
+
+src/molecules
+    DropCard.js
+    SizeGrid.js
+
+src/navigation
+    StackNavigator.js
+
+src/screens
+    FeedScreen.js
+    ProductDetail.js
